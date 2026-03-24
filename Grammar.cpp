@@ -10,22 +10,16 @@
 
 #include "Grammar.h"
 
-Grammar::Grammar()
+
+void Grammar::AddProduction(char leftHand, vector<Symbol> rightHand)
 {
-    
-}
-
-Grammar::Grammar(set<char> var, set<char> term, vector<Production> rule)
-{
-
-}
-
-void Grammar::SetStartVar(char S)
-{
-
-}
-
-void Grammar::AddProduction(char variable, vector<Production> &righthandside)
-{
-
+    if(rules.empty())
+        SetStartVar(leftHand);
+    rules.push_back({leftHand, rightHand});
+    AddVariables(leftHand);
+    for (const Symbol sym: rightHand)
+    {
+        if (sym.isTerminal) AddTerminals(sym.name);
+        else AddVariables(sym.name);
+    }
 }

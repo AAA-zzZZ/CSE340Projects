@@ -28,20 +28,26 @@ struct Production
 class Grammar
 {
 public:
-    Grammar();
-    Grammar(set<char> var, set<char> term, vector<Production> rule);
-
-    void SetStartVar(char S);
-    void AddProduction(char variable, vector<Production> &righthandside);
-
-    //getters for grammar constructing access
+    Grammar(){}
+    void AddProduction(char leftHand, vector<Symbol> rightHand);
     
+    const vector<Production> GetRules(){return rules;}
+    const set<char> GetTerminals(){ return terminals;}
+    const set<char> GetVariables(){return variables;}
+    const char GetStartVar(){return startSymbol;}
 
 private:
     set<char> variables;
     set<char> terminals;
     vector<Production> rules;
     char startSymbol;
+    char epsilon = '_';
+    void AddVariables(char var)
+        {variables.insert(var);}
+    void AddTerminals(char term)
+        {terminals.insert(term);}
+    void SetStartVar(char S)
+        {startSymbol = S;}
 };
 
 
