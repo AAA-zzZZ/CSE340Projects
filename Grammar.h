@@ -36,10 +36,18 @@ public:
     const set<char> GetVariables(){return variables;}
     const char GetStartVar(){return startSymbol;}
 
+
+    void ComputeNullable();
+    void ComputeFirst();
+    void ComputeFollow();
+    void ComputePredict();
+
+
 private:
     set<char> variables;
     set<char> terminals;
     vector<Production> rules;
+    set<char> nullables;
     char startSymbol;
     char epsilon = '_';
     void AddVariables(char var)
