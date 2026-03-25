@@ -1,12 +1,19 @@
+//------------------------------------
+// to compile: g++ --std=c++17 Grammar.cpp main.cpp
+//------------------------------------
+
 #include <iostream>
 #include <string>
 #include <stack>
 #include <vector>
+#include <map>
 #include "Grammar.h"
 
 using namespace std;
 
-
+//--------------------------------------------------------------
+// main
+//--------------------------------------------------------------
 int main()
 {
     Grammar cfg;
@@ -29,10 +36,13 @@ int main()
                 sym.name = c;
                 sym.isTerminal = islower(c);
                 rhs.push_back(sym);
+                
             }
         }
         cfg.AddProduction(lhs, rhs);
     }
+    cfg.ComputeNullable();
+    cfg.ComputeFirst();
 
     // temporary debug print in main.cpp
     for (const Production& p : cfg.GetRules()) {
@@ -43,9 +53,19 @@ int main()
     }
     cout << "Start: " << cfg.GetStartVar() << "\n";
     cout << "Variables: ";
-    for (char v : cfg.GetVariables()) cout << v << " ";
+    for (char var : cfg.GetVariables()) cout << var << " ";
     cout << "\nTerminals: ";
-    for (char t : cfg.GetTerminals()) cout << t << " ";
+    for (char term : cfg.GetTerminals()) cout << term << " ";
+    cout << "\nNullables: ";
+    for (char c: cfg.GetNullables()) cout << c << " ";
+    cout << "\nFIRST SETS: \n";
+    for (auto const& set: cfg.GetFIRSTSets())
+    {
+        cout << set.first<<" : {";
+        for (char s: set.second)
+            cout<< s << ", ";
+        cout<<"} \n";
+    }
 
 
 }

@@ -29,35 +29,43 @@ void Grammar::AddProduction(char leftHand, vector<Symbol> rightHand)
 //------------------------------------
 void Grammar::ComputeNullable()
 {
+
     bool change = true;
     while(change)
     {
         change = false;
         for (Production production: rules)
         {
-            // if it is epsilon production
             if(production.RightHandSide.empty())
-            {
-                nullables.insert(production.LeftHandSide);
-                change = true;
-            }    
-            
+            {    // if it is epsilon production
+                //if lhs hasnt already exist in nullable set yet
+                if (!nullables.count(production.LeftHandSide))
+                {
+                    nullables.insert(production.LeftHandSide);
+                    change = true;
+                }
+                continue;
+            } 
             //check for if each symbol on the right hand side is nullable
             bool allNullable = true;
-            for (Symbol sym: production.RightHandSide)
+            for(Symbol sym: production.RightHandSide)
             {
-                if (sym.isTerminal ||
-                    nullables.find(sym.name) == nullables.end())
-                {
-                    //if one variable is not nullable then break and end this for loop
+                //if one variable is not nullable(eg, is terminal or not in nullable set) 
+                //then break and end this for loop
+                if(sym.isTerminal ||
+                    nullables.count(sym.name)==0)
+                {   
                     allNullable=false;
                     break;
                 }
             }
             if (allNullable)
             {
+                if (!nullables.count(production.LeftHandSide))
+                {
                 nullables.insert(production.LeftHandSide);
                 change = true;
+                }
             }    
         }
     }

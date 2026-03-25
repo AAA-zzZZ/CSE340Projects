@@ -18,7 +18,7 @@ struct Symbol
 struct Production
 {
     char LeftHandSide;
-    vector<Symbol> RightHandSide;
+    vector< Symbol > RightHandSide;
 };
 
 //---------------------------------------------------------------------------------
@@ -29,12 +29,16 @@ class Grammar
 {
 public:
     Grammar(){}
-    void AddProduction(char leftHand, vector<Symbol> rightHand);
+    void AddProduction(char leftHand, vector<Symbol>rightHand);
     
-    const vector<Production> GetRules(){return rules;}
+    const vector< Production > GetRules(){return rules;}
     const set<char> GetTerminals(){ return terminals;}
     const set<char> GetVariables(){return variables;}
-    const char GetStartVar(){return startSymbol;}
+    char GetStartVar(){return startSymbol;}
+
+    //helper debugging functions
+    set<char> GetNullables(){return nullables;}
+    map< char, set<char> > GetFIRSTSets(){return FIRST;}
 
 
     void ComputeNullable();
@@ -44,22 +48,23 @@ public:
 
 
 private:
-    set<char> variables;
-    set<char> terminals;
-    vector<Production> rules;
+    set< char > variables;
+    set< char > terminals;
+    vector< Production > rules;
 
     set<char> nullables;
-    map<char, set<char>> FIRST;
-    map<char, set<char>> FOLLOW;
+    map< char, set<char>> FIRST;
+    map< char, set<char>> FOLLOW;
 
     char startSymbol;
     char epsilon = '_';
+
     void AddVariables(char var)
-        {variables.insert(var);}
+        { variables.insert(var); }
     void AddTerminals(char term)
-        {terminals.insert(term);}
+        { terminals.insert(term); }
     void SetStartVar(char S)
-        {startSymbol = S;}
+        { startSymbol= S; }
 };
 
 #endif
