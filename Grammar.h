@@ -47,7 +47,11 @@ private:
     set<char> variables;
     set<char> terminals;
     vector<Production> rules;
+
     set<char> nullables;
+    map<char, set<char>> FIRST;
+    map<char, set<char>> FOLLOW;
+
     char startSymbol;
     char epsilon = '_';
     void AddVariables(char var)
@@ -57,7 +61,5 @@ private:
     void SetStartVar(char S)
         {startSymbol = S;}
 };
-
-
 
 #endif

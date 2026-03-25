@@ -64,15 +64,29 @@ void Grammar::ComputeNullable()
 }
 
 //------------------------------------
-// compute the FIRST set for each variable
+// compute the FIRST set for each non terminal
 //------------------------------------
 void Grammar::ComputeFirst()
 {
-    
+    bool change = true;
+    while(change)
+    {
+        change = false;
+        for (Production prod: rules)
+        {
+            // if it is epsilon production
+            if(prod.RightHandSide.empty())
+            {
+                
+            }
+        }
+        
+    }
+
 }
 
 //------------------------------------
-//compute the FOLLOW set for each variable
+//compute the FOLLOW set for each symbol
 //------------------------------------
 void Grammar::ComputeFollow()
 {
