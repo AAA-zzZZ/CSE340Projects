@@ -76,21 +76,45 @@ void Grammar::ComputeNullable()
 //------------------------------------
 void Grammar::ComputeFirst()
 {
+    //initialize empty sets
+    for (char v : GetVariables())
+        FIRST[v] = {};
     bool change = true;
     while(change)
     {
         change = false;
         for (Production prod: rules)
         {
-            // if it is epsilon production
-            if(prod.RightHandSide.empty())
+            for(Symbol sym: prod.RightHandSide)
             {
-                
+                if(sym.isTerminal)
+                {
+                    //compute FIRST for all terminals
+                    if(FIRST[prod.LeftHandSide].count(sym.name)==0)
+                    {
+                        FIRST[prod.LeftHandSide].insert(sym.name);
+                        change = true;
+                    }
+                    break;
+                }
+                else
+                {
+                    //find FIRST for non terminals
+                    for(char c: FIRST[sym.name])
+                    {
+                        if (FIRST[prod.LeftHandSide].count(c)==0)
+                        {
+                            //add FIRST(B) to FIRST(A) 
+                            FIRST[prod.LeftHandSide].insert(c);
+                            change = true;
+                        }
+                    }
+                    //if sym is nullable continue to next variable
+                    if (nullables.count(sym.name)==0)  break;
+                }
             }
-        }
-        
+        }      
     }
-
 }
 
 //------------------------------------
@@ -98,6 +122,67 @@ void Grammar::ComputeFirst()
 //------------------------------------
 void Grammar::ComputeFollow()
 {
+ //initialize empty sets
+    for (char v : GetVariables())
+        FOLLOW[v] = {};
+    FOLLOW[startSymbol].insert('$');
+    bool change = true;
+    while(change)
+    {
+        change = false;
+        for (Production prod: rules)
+        {
+            //prod:B
+            for (int i = 0; i < prod.RightHandSide.size(); i++)
+            {
+                //current :A
+                Symbol current = prod.RightHandSide[i];
+                if (current.isTerminal) continue;
+                
+                bool restAllNullable = true;
+                for(int j=i+1; j < prod.RightHandSide.size(); j++)
+                {
+                    //next: C_i
+                    Symbol next = prod.RightHandSide[j];
+                    
+                    if (next.isTerminal){
+                        if(FOLLOW[current.name].count(next.name) == 0)
+                        {
+                            FOLLOW[current.name].insert(next.name);
+                            change = true;
+                        }
+                        restAllNullable=false;
+                        break;
+                    }
+                    //else then rest are all variables
+                    else
+                    {
+                        //if 
+                        for (char c: FIRST[next.name])
+                        {
+                            if (!FOLLOW[current.name].count(c)) 
+                            {
+                                FOLLOW[current.name].insert(c);
+                                change = true;
+                            }
+                        }
+
+                }
+                
+                //if B-> aA
+                //add FOLLOW(B) to FOLLOW(A)
+                if (FOLLOW[prod.RightHandSide.at(i).name]
+                                .count(prod.LeftHandSide) == 0)
+                {
+                    FOLLOW[]
+                }
+                    
+            }
+                
+            }
+        }
+    }
+
 }
 
 
