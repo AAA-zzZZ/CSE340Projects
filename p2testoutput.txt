@@ -1,0 +1,45 @@
+S -> AC
+C -> c
+C -> epsilon
+A -> aBCd
+A -> BQ
+A -> epsilon
+B -> bB
+B -> d
+Q -> q
+Start: S
+Variables: A B C Q S 
+Terminals: a b c d q 
+Nullables: A C S 
+FIRST SETS: 
+A : {a, b, d, } 
+B : {b, d, } 
+C : {c, } 
+Q : {q, } 
+S : {a, b, c, d, } 
+a : {} 
+b : {} 
+c : {} 
+d : {} 
+q : {} 
+
+FOLLOW SETS: 
+A : {$, c, } 
+B : {c, d, q, } 
+C : {$, d, } 
+Q : {$, c, } 
+S : {$, } 
+a : {} 
+d : {} 
+
+PREDICT SETS: 
+0 : {} 
+1 : {$, a, b, c, d, } 
+2 : {} 
+3 : {} 
+4 : {$, b, c, d, q, } 
+5 : {b, d, q, } 
+6 : {} 
+7 : {b, d, } 
+8 : {} 
+9 : {} 

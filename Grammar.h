@@ -17,6 +17,7 @@ struct Symbol
 
 struct Production
 {
+    int order = 1;
     char LeftHandSide;
     vector< Symbol > RightHandSide;
 };
@@ -29,7 +30,7 @@ class Grammar
 {
 public:
     Grammar(){}
-    void AddProduction(char leftHand, vector<Symbol>rightHand);
+    void AddProduction(int order, char leftHand, vector<Symbol>rightHand);
     
     const vector< Production > GetRules(){return rules;}
     const set<char> GetTerminals(){ return terminals;}
@@ -39,7 +40,8 @@ public:
     //helper debugging functions
     set<char> GetNullables(){return nullables;}
     map< char, set<char> > GetFIRSTSets(){return FIRST;}
-
+    map< char, set<char> > GetFOLLOWSets(){return FOLLOW;}
+    map< int, set<char> > GetPREDICTSets(){return PREDICT;}
 
     void ComputeNullable();
     void ComputeFirst();
@@ -55,6 +57,7 @@ private:
     set<char> nullables;
     map< char, set<char>> FIRST;
     map< char, set<char>> FOLLOW;
+    map< int, set<char>> PREDICT;
 
     char startSymbol;
     char epsilon = '_';

@@ -1,5 +1,5 @@
 //------------------------------------
-// to compile: 
+// to compile: g++ --std=c++17 -g Grammar.cpp main.cpp -o program
 //------------------------------------
 #include <iostream>
 #include <set>
@@ -11,11 +11,11 @@
 #include "Grammar.h"
 
 
-void Grammar::AddProduction(char leftHand, vector<Symbol> rightHand)
+void Grammar::AddProduction(int order, char leftHand, vector<Symbol> rightHand)
 {
     if(rules.empty())
         SetStartVar(leftHand);
-    rules.push_back({leftHand, rightHand});
+    rules.push_back({order, leftHand, rightHand});
     AddVariables(leftHand);
     for (const Symbol sym: rightHand)
     {
@@ -140,6 +140,7 @@ void Grammar::ComputeFollow()
                 if (current.isTerminal) continue;
                 
                 bool restAllNullable = true;
+                //checking anything to the right of A
                 for(int j=i+1; j < prod.RightHandSide.size(); j++)
                 {
                     //next: C_i
@@ -157,28 +158,40 @@ void Grammar::ComputeFollow()
                     //else then rest are all variables
                     else
                     {
-                        //if 
+                        //case 4&5: add FIRST[C_i] to FOLLOW[A]
+                        //when C_i is nullable, it keeps adding to FOLLOW(A)
                         for (char c: FIRST[next.name])
                         {
-                            if (!FOLLOW[current.name].count(c)) 
+                            if (FOLLOW[current.name].count(c)==0) 
                             {
                                 FOLLOW[current.name].insert(c);
                                 change = true;
                             }
                         }
-
+                        //if a C_i is not nullable, add FIRST(C_i) to FOLLOW(A)
+                        //and break
+                        if(nullables.count(next.name) == 0)
+                        {
+                            restAllNullable =false;
+                            break;
+                        }
+                        
+                    }
                 }
-                
-                //if B-> aA
-                //add FOLLOW(B) to FOLLOW(A)
-                if (FOLLOW[prod.RightHandSide.at(i).name]
-                                .count(prod.LeftHandSide) == 0)
+                //after the for loop, if rest of all var to the right of A are nullable will be determined
+                //if true then add FOLLOW(B) to FOLLOW(A)
+                if (restAllNullable)
                 {
-                    FOLLOW[]
+                    //loop through FOLLOW(B)
+                    for (char c: FOLLOW[prod.LeftHandSide])
+                    {
+                        if(FOLLOW[current.name].count(c) == 0)
+                        {
+                            FOLLOW[current.name].insert(c);
+                            change=true;
+                        }
+                    }
                 }
-                    
-            }
-                
             }
         }
     }
@@ -191,4 +204,29 @@ void Grammar::ComputeFollow()
 //------------------------------------
 void Grammar::ComputePredict()
 {
+    //initialize empty sets
+    for (int i=0; i<rules.size();i++)
+        PREDICT[i] = {};
+    for (Production prod: rules)
+    {
+        set<char> predictionForProd;
+        bool ifEpsilon = false;
+        for (Symbol sym: prod.RightHandSide)
+        {
+            for(char c: FIRST[sym.name])
+                predictionForProd.insert(c);
+            if(nullables.count(sym.name)!=0)
+                ifEpsilon=true;
+        }
+        if (ifEpsilon)
+        {
+            for (Symbol sym:prod.RightHandSide)
+            {
+                for(char c: FOLLOW[sym.name])
+                    predictionForProd.insert(c);
+            }
+        }
+        PREDICT[prod.order]=predictionForProd;
+    }
+    
 }

@@ -1,0 +1,9 @@
+S: AC
+C: c
+C: _
+A: aBCd
+A: BQ
+A: _
+B: bB
+B: d
+Q: q

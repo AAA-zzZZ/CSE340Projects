@@ -1,5 +1,5 @@
 //------------------------------------
-// to compile: g++ --std=c++17 Grammar.cpp main.cpp
+// to compile: g++ --std=c++17 -g Grammar.cpp main.cpp -o debug
 //------------------------------------
 
 #include <iostream>
@@ -21,9 +21,11 @@ int main()
     
     //read grammars
     string line;
+    int numOfProductions = 0;
     while (getline(cin, line)) {
         if (line.empty()) break;
         // parse line into production, add to g
+
         char lhs = line[0];
         string rhs_str = line.substr(3);
         vector<Symbol> rhs;
@@ -39,10 +41,13 @@ int main()
                 
             }
         }
-        cfg.AddProduction(lhs, rhs);
+        numOfProductions++;
+        cfg.AddProduction(numOfProductions,lhs, rhs);
     }
     cfg.ComputeNullable();
     cfg.ComputeFirst();
+    cfg.ComputeFollow();
+    cfg.ComputePredict();
 
     // temporary debug print in main.cpp
     for (const Production& p : cfg.GetRules()) {
@@ -60,6 +65,23 @@ int main()
     for (char c: cfg.GetNullables()) cout << c << " ";
     cout << "\nFIRST SETS: \n";
     for (auto const& set: cfg.GetFIRSTSets())
+    {
+        cout << set.first<<" : {";
+        for (char s: set.second)
+            cout<< s << ", ";
+        cout<<"} \n";
+    }
+    cout << "\nFOLLOW SETS: \n";
+    for (auto const& set: cfg.GetFOLLOWSets())
+    {
+        cout << set.first<<" : {";
+        for (char s: set.second)
+            cout<< s << ", ";
+        cout<<"} \n";
+    }
+
+    cout << "\nPREDICT SETS: \n";
+    for (auto const& set: cfg.GetPREDICTSets())
     {
         cout << set.first<<" : {";
         for (char s: set.second)
