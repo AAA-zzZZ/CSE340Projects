@@ -210,23 +210,31 @@ void Grammar::ComputePredict()
     for (Production prod: rules)
     {
         set<char> predictionForProd;
-        bool ifEpsilon = false;
+        bool allNullable = true;
         for (Symbol sym: prod.RightHandSide)
         {
-            for(char c: FIRST[sym.name])
-                predictionForProd.insert(c);
-            if(nullables.count(sym.name)!=0)
-                ifEpsilon=true;
-        }
-        if (ifEpsilon)
-        {
-            for (Symbol sym:prod.RightHandSide)
+            if(sym.isTerminal)
             {
-                for(char c: FOLLOW[sym.name])
+                predictionForProd.insert(sym.name);
+                allNullable=false;
+                break;
+            }
+            else
+            {
+                for(char c: FIRST[sym.name])
                     predictionForProd.insert(c);
+                if(nullables.count(sym.name)==0)
+                {
+                    allNullable=false;
+                    break;
+                }   
             }
         }
+        if(prod.RightHandSide.empty() || allNullable)
+            for (char c: FOLLOW[prod.LeftHandSide])
+            {
+                predictionForProd.insert(c);
+            }
         PREDICT[prod.order]=predictionForProd;
     }
-    
 }

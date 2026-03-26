@@ -41,8 +41,8 @@ int main()
                 
             }
         }
-        numOfProductions++;
         cfg.AddProduction(numOfProductions,lhs, rhs);
+        numOfProductions++;
     }
     cfg.ComputeNullable();
     cfg.ComputeFirst();
