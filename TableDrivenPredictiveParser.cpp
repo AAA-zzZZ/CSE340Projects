@@ -1,5 +1,5 @@
 //------------------------------------
-// to compile:  g++ --std=c++17 -g Grammar.cpp ParseTable.cpp TableDrivenPredictiveParser.cpp -o program
+// to compile:  g++ --std=c++17 -g Grammar.cpp ParseTable.cpp TableDrivenPredictiveParser.cpp
 //------------------------------------
 
 #include <iostream>
@@ -41,27 +41,14 @@ TableDrivenPredictiveParser::TableDrivenPredictiveParser(const Grammar& grammar,
         else lookhead = '$';
         if(grammar.GetTerminals().count(X)!=0)
         {
-            if(X==lookhead)
-            {
-                s.pop();
+            if(X==lookhead){ s.pop();
                 // match(lookahead) which is consume this char
-                pos++;
-            }
-            else    
-            {
-                error=true;
-                cout<<"ERROR: underivable"<<endl;
-                break;   
-            }
+                pos++;}
+            else{error=true; break;}
         }
         else{
             int productionNum = table.LookUp(X,lookhead);
-            if (productionNum==-1)
-            {
-                error=true;
-                cout<<"ERROR: no derivable rules, table entry = -1"<<endl;
-                break;
-            }    
+            if (productionNum==-1){error=true; break;}    
             Production prod = grammar.GetRules().at(productionNum);
             s.pop();
             
@@ -135,49 +122,9 @@ int main()
     cfg.ComputePredict();
     ParseTable pt(cfg);
 
-     // temporary debug print in main.cpp
-    // for (const Production& p : cfg.GetRules()) {
-    //     cout << p.LeftHandSide << " -> ";
-    //     if (p.RightHandSide.empty()) cout << "epsilon";
-    //     else for (const Symbol& s : p.RightHandSide) cout << s.name;
-    //     cout << "\n";
-    // }
-    // cout << "Start: " << cfg.GetStartVar() << "\n";
-    // cout << "Variables: ";
-    // for (char var : cfg.GetVariables()) cout << var << " ";
-    // cout << "\nTerminals: ";
-    // for (char term : cfg.GetTerminals()) cout << term << " ";
-    // cout << "\nNullables: ";
-    // for (char c: cfg.GetNullables()) cout << c << " ";
-    // cout << "\nFIRST SETS: \n";
-    // for (auto const& set: cfg.GetFIRSTSets())
-    // {
-    //     cout << set.first<<" : {";
-    //     for (char s: set.second)
-    //         cout<< s << ", ";
-    //     cout<<"} \n";
-    // }
-    // cout << "\nFOLLOW SETS: \n";
-    // for (auto const& set: cfg.GetFOLLOWSets())
-    // {
-    //     cout << set.first<<" : {";
-    //     for (char s: set.second)
-    //         cout<< s << ", ";
-    //     cout<<"} \n";
-    // }
-
-    // cout << "\nPREDICT SETS: \n";
-    // for (auto const& set: cfg.GetPREDICTSets())
-    // {
-    //     cout << set.first<<" : {";
-    //     for (char s: set.second)
-    //         cout<< s << ", ";
-    //     cout<<"} \n";
-    // }
-
     if(pt.IsAmbiguous())
     {
-        cout<<"ERROR: The grammar is ambiguous"<<endl;
+        cout<<"ERROR"<<endl;
         return 0;
     }    
     //else pt.PrintTable();
