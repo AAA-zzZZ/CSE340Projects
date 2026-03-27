@@ -1,12 +1,4 @@
-S -> AC
-C -> c
-C -> epsilon
-A -> aBCd
-A -> BQ
-A -> epsilon
-B -> bB
-B -> d
-Q -> q
+TEST: "bdqc"
 Start: S
 Variables: A B C Q S 
 Terminals: a b c d q 
@@ -43,3 +35,4 @@ B	-	6	-	7	-	-
 C	-	-	1	2	-	2	
 Q	-	-	-	-	8	-	
 S	0	0	0	0	-	0	
+S AC BQC bBQC bdQC bdqC bdqc
