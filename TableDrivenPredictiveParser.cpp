@@ -28,11 +28,13 @@ TableDrivenPredictiveParser::TableDrivenPredictiveParser(const Grammar& grammar,
     s.push('$');    s.push(grammar.GetStartVar());
     int pos=0;
     char X = s.top();
+    char lookhead;
     bool error = false;
     while (X!='$')
     {
-        char lookhead = input.at(pos);
-        if(grammar.GetTerminals().count(lookhead)!=0)
+        if(pos<=input.size())   lookhead= input.at(pos);
+        else lookhead = '$';
+        if(grammar.GetTerminals().count(X)!=0)
         {
             if(X==lookhead)
             {
@@ -40,16 +42,22 @@ TableDrivenPredictiveParser::TableDrivenPredictiveParser(const Grammar& grammar,
                 // match(lookahead) which is consume this char
                 pos++;
             }
-            else
+            else    
+            {
                 error=true;
+                break;   
+            }
         }
         else{
             int productionNum = table.LookUp(X,lookhead);
             if (productionNum==-1)
+            {
                 error=true;
+                break;
+            }    
             Production prod = grammar.GetRules().at(productionNum);
             s.pop();
-            for (int i = 0; i <prod.RightHandSide.size(); i++)
+            for (int i = prod.RightHandSide.size()-1; i>=0; i--)
                 s.push(prod.RightHandSide.at(i).name);
         }
         X=s.top();
