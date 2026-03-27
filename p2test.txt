@@ -7,3 +7,5 @@ A: _
 B: bB
 B: d
 Q: q
+
+"bdqc"

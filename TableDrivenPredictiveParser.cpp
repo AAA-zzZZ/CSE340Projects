@@ -30,9 +30,14 @@ TableDrivenPredictiveParser::TableDrivenPredictiveParser(const Grammar& grammar,
     char X = s.top();
     char lookhead;
     bool error = false;
+
+    string currentDerivation  ="";
+    currentDerivation+=grammar.GetStartVar();
+    cout<<currentDerivation;
+
     while (X!='$')
     {
-        if(pos<=input.size())   lookhead= input.at(pos);
+        if(pos<input.size())   lookhead= input.at(pos);
         else lookhead = '$';
         if(grammar.GetTerminals().count(X)!=0)
         {
@@ -50,6 +55,7 @@ TableDrivenPredictiveParser::TableDrivenPredictiveParser(const Grammar& grammar,
         }
         else{
             int productionNum = table.LookUp(X,lookhead);
+            
             if (productionNum==-1)
             {
                 error=true;
@@ -57,11 +63,20 @@ TableDrivenPredictiveParser::TableDrivenPredictiveParser(const Grammar& grammar,
             }    
             Production prod = grammar.GetRules().at(productionNum);
             s.pop();
+            
+            string right = "";
+            for (Symbol sym:prod.RightHandSide)
+                right+=sym.name;
+            size_t currentDerivePos = currentDerivation.find(X);
+            //output X → Y1Y2...Yk
+            if(currentDerivePos!=currentDerivation.npos)
+                currentDerivation.replace(currentDerivePos,1,right);
+            cout<<" "<<currentDerivation;
+            
             for (int i = prod.RightHandSide.size()-1; i>=0; i--)
                 s.push(prod.RightHandSide.at(i).name);
         }
         X=s.top();
-        pos++;
     }  
 };
 
@@ -80,7 +95,6 @@ int main()
     while (getline(cin, line)) {
         if (line.empty()) break;
         // parse line into production, add to g
-
         char lhs = line[0];
         string rhs_str = line.substr(3);
         vector<Symbol> rhs;
@@ -99,4 +113,70 @@ int main()
         cfg.AddProduction(numOfProductions,lhs, rhs);
         numOfProductions++;
     }
+    //read input string
+    string quoted;
+    while (getline(cin,quoted))
+    {
+        if (!quoted.empty())  break;
+    }
+    string inputString = quoted.substr(1,quoted.size()-2);
+    cout<<"TEST: "<<quoted<<endl;
+
+    //compute
+    cfg.ComputeNullable();
+    cfg.ComputeFirst();
+    cfg.ComputeFollow();
+    cfg.ComputePredict();
+    ParseTable pt(cfg);
+
+     // temporary debug print in main.cpp
+    // for (const Production& p : cfg.GetRules()) {
+    //     cout << p.LeftHandSide << " -> ";
+    //     if (p.RightHandSide.empty()) cout << "epsilon";
+    //     else for (const Symbol& s : p.RightHandSide) cout << s.name;
+    //     cout << "\n";
+    // }
+    cout << "Start: " << cfg.GetStartVar() << "\n";
+    cout << "Variables: ";
+    for (char var : cfg.GetVariables()) cout << var << " ";
+    cout << "\nTerminals: ";
+    for (char term : cfg.GetTerminals()) cout << term << " ";
+    cout << "\nNullables: ";
+    for (char c: cfg.GetNullables()) cout << c << " ";
+    cout << "\nFIRST SETS: \n";
+    for (auto const& set: cfg.GetFIRSTSets())
+    {
+        cout << set.first<<" : {";
+        for (char s: set.second)
+            cout<< s << ", ";
+        cout<<"} \n";
+    }
+    cout << "\nFOLLOW SETS: \n";
+    for (auto const& set: cfg.GetFOLLOWSets())
+    {
+        cout << set.first<<" : {";
+        for (char s: set.second)
+            cout<< s << ", ";
+        cout<<"} \n";
+    }
+
+    cout << "\nPREDICT SETS: \n";
+    for (auto const& set: cfg.GetPREDICTSets())
+    {
+        cout << set.first<<" : {";
+        for (char s: set.second)
+            cout<< s << ", ";
+        cout<<"} \n";
+    }
+
+    if(pt.IsAmbiguous())
+    {
+        cout<<"******DEBUG:***********ERROR! parse table ambiguous"<<endl;
+        return 0;
+    }    
+    else pt.PrintTable();
+
+    TableDrivenPredictiveParser parser(cfg, pt, quoted);
+
+
 }
