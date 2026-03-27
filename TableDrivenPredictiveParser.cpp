@@ -33,7 +33,7 @@ TableDrivenPredictiveParser::TableDrivenPredictiveParser(const Grammar& grammar,
 
     string currentDerivation  ="";
     currentDerivation+=grammar.GetStartVar();
-    cout<<currentDerivation;
+    string output = currentDerivation;
 
     while (X!='$')
     {
@@ -56,7 +56,6 @@ TableDrivenPredictiveParser::TableDrivenPredictiveParser(const Grammar& grammar,
         }
         else{
             int productionNum = table.LookUp(X,lookhead);
-            
             if (productionNum==-1)
             {
                 error=true;
@@ -73,13 +72,18 @@ TableDrivenPredictiveParser::TableDrivenPredictiveParser(const Grammar& grammar,
             //output X → Y1Y2...Yk
             if(currentDerivePos!=currentDerivation.npos)
                 currentDerivation.replace(currentDerivePos,1,right);
-            cout<<" "<<currentDerivation;
+            output+=" "+currentDerivation;
             
             for (int i = prod.RightHandSide.size()-1; i>=0; i--)
                 s.push(prod.RightHandSide.at(i).name);
         }
         X=s.top();
     }  
+
+    if (pos<input.size())   error=true;
+    if(error)   cout<<"ERROR"<<endl;
+    else cout<<output<<endl;
+    
 };
 
 
@@ -176,9 +180,7 @@ int main()
         cout<<"ERROR: The grammar is ambiguous"<<endl;
         return 0;
     }    
-    else pt.PrintTable();
+    //else pt.PrintTable();
 
     TableDrivenPredictiveParser parser(cfg, pt, inputString);
-
-
 }
