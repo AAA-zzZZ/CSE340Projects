@@ -44,7 +44,7 @@ int ParseTable::LookUp(char variable, char terminal) const
 {
     if(table.count(variable)!=0 &&
         table.at(variable).count(terminal)!=0)
-        return table.at(variable).count(terminal);
+        return table.at(variable).at(terminal);
     return -1;
 }
 
