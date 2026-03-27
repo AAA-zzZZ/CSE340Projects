@@ -1,5 +1,5 @@
 //------------------------------------
-// to compile: g++ --std=c++17 -g Grammar.cpp main.cpp -o debug
+//  g++ --std=c++17 -g Grammar.cpp ParseTable.cpp main.cpp -o program
 //------------------------------------
 
 #include <iostream>

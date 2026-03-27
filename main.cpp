@@ -8,6 +8,7 @@
 #include <vector>
 #include <map>
 #include "Grammar.h"
+#include "ParseTable.h"
 
 using namespace std;
 
@@ -89,5 +90,9 @@ int main()
         cout<<"} \n";
     }
 
+    ParseTable pt(cfg);
+    if(pt.IsAmbiguous())
+        cout<<"******DEBUG:***********ERROR! parse table ambiguous"<<endl;
+    else pt.PrintTable();
 
 }
