@@ -50,5 +50,26 @@ int ParseTable::LookUp(char variable, char terminal) const
 
 void ParseTable::PrintTable()
 {
+    cout << "\nPARSE TABLE:\n";
+    cout << "NT\t";
     
+    // print all terminals as column headers
+    for (char t : grammar.GetTerminals())
+        cout << t << "\t";
+    cout << "$\t\n";
+
+    // print each row
+    for (char nt : grammar.GetVariables()) {
+        cout << nt << "\t";
+        for (char t : grammar.GetTerminals()) {
+            int rule = LookUp(nt, t);
+            if (rule == -1) cout << "-\t";
+            else cout << rule << "\t";
+        }
+        // check $ column
+        int rule = LookUp(nt, '$');
+        if (rule == -1) cout << "-\t";
+        else cout << rule << "\t";
+        cout << "\n";
+    }
 }
