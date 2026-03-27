@@ -32,16 +32,16 @@ public:
     Grammar(){}
     void AddProduction(int order, char leftHand, vector<Symbol>rightHand);
     
-    const vector< Production > GetRules(){return rules;}
-    const set<char> GetTerminals(){ return terminals;}
-    const set<char> GetVariables(){return variables;}
-    char GetStartVar(){return startSymbol;}
+    const vector< Production > GetRules()const{return rules;}
+    const set<char> GetTerminals()const{ return terminals;}
+    const set<char> GetVariables()const{return variables;}
+    char GetStartVar()const{return startSymbol;}
 
     //helper debugging functions
     set<char> GetNullables(){return nullables;}
-    map< char, set<char> > GetFIRSTSets(){return FIRST;}
-    map< char, set<char> > GetFOLLOWSets(){return FOLLOW;}
-    map< int, set<char> > GetPREDICTSets(){return PREDICT;}
+    map< char, set<char> > GetFIRSTSets()const{return FIRST;}
+    map< char, set<char> > GetFOLLOWSets()const{return FOLLOW;}
+    map< int, set<char> > GetPREDICTSets()const{return PREDICT;}
 
     void ComputeNullable();
     void ComputeFirst();
